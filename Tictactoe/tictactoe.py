@@ -83,7 +83,9 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+    
+    Return winner(board) != None or actions(board) == set()
+
 
 
 def utility(board):
