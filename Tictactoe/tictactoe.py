@@ -3,11 +3,11 @@ Tic Tac Toe Player
 """
 
 import math
+import copy
 
 X = "X"
 O = "O"
 EMPTY = None
-
 
 def initial_state():
     """
@@ -25,7 +25,7 @@ def player(board):
     numX = board[0].count(X) + board[1].count(X) + board[2].count(X)
     numO = board[0].count(O) + board[1].count(O) + board[2].count(O)
     
-    if numX > numO or numX == 0 :
+    if numX <= numO or numX == 0 :
         return X
     else:
         return O
@@ -52,7 +52,7 @@ def result(board, action):
         
     elif player(board) == X:
         deepboard = copy.deepcopy(board)
-        deepboardboard[i][j] = X
+        deepboard[i][j] = X
         
     else:
         deepboard = copy.deepcopy(board)
@@ -90,7 +90,7 @@ def terminal(board):
     Returns True if game is over, False otherwise.
     """
     
-    Return winner(board) != None or actions(board) == set()
+    return (winner(board) != None or actions(board) == set())
 
 
 
@@ -109,8 +109,48 @@ def utility(board):
 
 
 def minimax(board):
-    """
-    Returns the optimal action for the current player on the board.
-    """
-    raise NotImplementedError
+    if terminal(board):
+        return None
 
+    if player(board) == X:
+        _, best_action = maxvalue(board)
+        return best_action
+    
+    elif player(board) == O:
+        _, best_action = minvalue(board)
+        return best_action
+    
+    else:
+        return None
+
+def minvalue(board):
+    
+    if terminal(board):
+        return utility(board), None
+
+    v = float('inf')
+    best_action = None
+
+    for action in actions(board):
+        score, _ = maxvalue(result(board, action))
+        if score < v:
+            v = score
+            best_action = action
+
+    return v, best_action
+
+def maxvalue(board):
+    
+    if terminal(board):
+        return utility(board), None
+
+    v = float('-inf')
+    best_action = None
+
+    for action in actions(board):
+        score, _ = minvalue(result(board, action))
+        if score > v:
+            v = score
+            best_action = action
+
+    return v, best_action
