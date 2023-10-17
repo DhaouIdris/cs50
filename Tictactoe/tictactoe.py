@@ -46,14 +46,20 @@ def result(board, action):
     Returns the board that results from making move (i, j) on the board.
     """
     (i,j)= action
+    
     if board[i][j] != None :
         raise ValueError
+        
     elif player(board) == X:
         deepboard = copy.deepcopy(board)
-        board[i][j] = X
+        deepboardboard[i][j] = X
+        
     else:
         deepboard = copy.deepcopy(board)
-        board[i][j] = O
+        deepboard[i][j] = O
+        
+    return deepboard
+
 
 def winner(board):
     """
