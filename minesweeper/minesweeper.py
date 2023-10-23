@@ -181,7 +181,6 @@ class MinesweeperAI():
         """
         Called when the Minesweeper board tells us, for a given
         safe cell, how many neighboring cells have mines in them.
-
         This function should:
             1) mark the cell as a move that has been made
             2) mark the cell as safe
@@ -192,10 +191,61 @@ class MinesweeperAI():
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
+        #!
         self.moves_made.add(cell)
         
-        if cell not in self.safe:
+        #2
+        if cell not in self.safes:
             self.mark_safe(cell)
+        
+        #3
+        neighbors = self.Neighbors(cell)
+        uknown_neighbors = []
+        countMines = 0
+        for neighbor in neighbors:
+            if neighbor not in self.safes:
+                if neighbor in self.mines:
+                    countMines += 1
+                else:
+                    uknown_neighbors.append(neighbor)
+         
+        new_count = count - countMines            
+        new_sentence = Sentence(uknown_neighbors, new_count)
+        self.knowledge.append(new_sentence)
+        
+        #4
+        for sentence in self.knowledge:
+            if sentence.known_mines():
+                for cell in sentence.known_mines().copy():
+                    self.mark_mine(cell)
+            if sentence.known_safes():
+                for cell in sentence.known_safes().copy():
+                    self.mark_safe(cell)
+            
+        #5
+        for sentence in self.knowledge : 
+            if new_sentence.cells.issubset(sentence.cells) and sentence != new_sentence and new_count > 0 :
+                sentence2 = Sentence(list(new_sentence.cells- sentence.cells), new_count - sentence.count)
+                self.knowledge.append(sentence2)
+    
+    
+        
+    def Neighbors(self, cell):
+        Neighbors = []
+        a,b = cell
+        for i in range(a-1,a+2):
+            for j in range(b-1,b+2):
+                if 0 <= i < self.height and 0 <= j < self.width:
+                    Neighbors.append((i,j))
+
+        return Neighbors                                                                        
+                                                                                                        
+        
+        
+        
+        
+        
+
 
     def make_safe_move(self):
         """
@@ -223,6 +273,10 @@ class MinesweeperAI():
             for j in range(self.width):
                 if (i,j) not in self.mines and (i,j) not in self.moves_made:
                     Random_Moves.append((i,j))
+        if len(Random_Moves) == 0:       
+            return None
+        else:
+            return random.choice(Random_Moves)
         if len(Random_Moves) == 0:       
             return None
         else:
