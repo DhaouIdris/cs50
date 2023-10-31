@@ -94,35 +94,36 @@ class CrosswordCreator():
         return self.backtrack(dict())
 
     def enforce_node_consistency(self):
-        """
-        Update `self.domains` such that each variable is node-consistent.
-        (Remove any values that are inconsistent with a variable's unary
-         constraints; in this case, the length of the word.)
-        """
-        raise NotImplementedError
+        for var in self.crossword.variables:
+            for word in self.domains[var].copy():
+                if len(word) != var.length:
+                    self.domains[var].remove(word)
 
     def revise(self, x, y):
-        """
-        Make variable `x` arc consistent with variable `y`.
-        To do so, remove values from `self.domains[x]` for which there is no
-        possible corresponding value for `y` in `self.domains[y]`.
-
-        Return True if a revision was made to the domain of `x`; return
-        False if no revision was made.
-        """
-        raise NotImplementedError
+        revised = False
+        if self.crossword.overlaps[x, y]:
+            i, j = self.crossword.overlaps[x, y]
+            for word_x in self.domains[x].copy():
+                if all(word_x[i] == word_y[j] for word_y in self.domains[y]):
+                    continue
+                self.domains[x].remove(word_x)
+                revised = True
+        return revised
 
     def ac3(self, arcs=None):
-        """
-        Update `self.domains` such that each variable is arc consistent.
-        If `arcs` is None, begin with initial list of all arcs in the problem.
-        Otherwise, use `arcs` as the initial list of arcs to make consistent.
+        if arcs is None:
+            arcs = [(x, y) for x in self.crossword.variables for y in self.crossword.neighbors(x)]
 
-        Return True if arc consistency is enforced and no domains are empty;
-        return False if one or more domains end up empty.
-        """
-        raise NotImplementedError
-
+        queue = deque(arcs)
+        while queue:
+            x, y = queue.popleft()
+            if self.revise(x, y):
+                if not self.domains[x]:
+                    return False
+                for z in self.crossword.neighbors(x):
+                    if z != y:
+                        queue.append((z, x))
+        return True
     def assignment_complete(self, assignment):
         """
         Return True if `assignment` is complete (i.e., assigns a value to each
