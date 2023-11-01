@@ -139,7 +139,42 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         * everyone in set `have_trait` has the trait, and
         * everyone not in set` have_trait` does not have the trait.
     """
-    raise NotImplementedError
+    # Initialize the joint probability
+    joint_prob = 1.0
+
+    for person, data in people.items():
+        # Calculate the probability of gene copies for each person
+        if person in one_gene:
+            num_copies = 1
+        elif person in two_genes:
+            num_copies = 2
+        else:
+            num_copies = 0
+
+        # Initialize the probability of having the trait
+        trait_prob = 1.0
+
+        # Calculate the probability of having the gene based on parental information
+        if data["mother"] is None:
+            gene_prob = PROBS["gene"][num_copies]
+        else:
+            mother_prob = joint_probability(people, {data["mother"]}, set(), have_trait)
+            father_prob = joint_probability(people, {data["father"]}, set(), have_trait)
+            if num_copies == 0:
+                gene_prob = (1 - mother_prob) * (1 - father_prob)
+            elif num_copies == 1:
+                gene_prob = mother_prob * (1 - father_prob) + (1 - mother_prob) * father_prob
+            else:
+                gene_prob = mother_prob * father_prob
+
+        # Calculate the probability of having the trait based on gene status
+        trait_prob = PROBS["trait"][num_copies][person in have_trait]
+
+        # Multiply the probabilities for gene and trait to get the joint probability
+        joint_prob *= gene_prob * trait_prob
+
+    return joint_prob
+
 
 
 def update(probabilities, one_gene, two_genes, have_trait, p):
