@@ -83,9 +83,16 @@ def load_data(filename):
         for row in reader:
             L = []
             label.append(1) if row[17] else label.append(0)
-            L.append([int(cell) for cell in row[:12]])
-            L.append(month_dict[row[12]])
-            L.append(int(cell) for cell in row[13:])
+            L.append(int(row[0]))
+            L.append(float(row[1]))
+            L.append(int(row[2]))
+            L.append(float(row[3]))
+            L.append(int(row[4]))
+            L.append(float(cell) for cell in row[5:10])
+            L.append(month_dict[row[10]])
+            L.append(int(cell) for cell in row[11:15])
+            L.append(int(row[15] == 'Returning_Visitor')) 
+            L.append(int(row[16]))  
             evidence.append(L)
     
     return (evidence, label)
