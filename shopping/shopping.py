@@ -12,7 +12,7 @@ month_dict = {
     "Mar": 2,
     "Apr": 3,
     "May": 4,
-    "Jun": 5,
+    "June": 5,
     "Jul": 6,
     "Aug": 7,
     "Sep": 8,
@@ -82,7 +82,7 @@ def load_data(filename):
         
         for row in reader:
             L = []
-            label.append(1) if row[17] else label.append(0)
+            label.append(1) if row[17] == "TRUE" else label.append(0)
             L.append(int(row[0]))
             L.append(float(row[1]))
             L.append(int(row[2]))
