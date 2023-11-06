@@ -6,6 +6,21 @@ from sklearn.neighbors import KNeighborsClassifier
 
 TEST_SIZE = 0.4
 
+month_dict = {
+    "Jan": 0,
+    "Feb": 1,
+    "Mar": 2,
+    "Apr": 3,
+    "May": 4,
+    "Jun": 5,
+    "Jul": 6,
+    "Aug": 7,
+    "Sep": 8,
+    "Oct": 9,
+    "Nov": 10,
+    "Dec": 11
+}
+
 
 def main():
 
@@ -59,7 +74,21 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+    evidence = []
+    label = []
+    with open('shopping.csv') as f:
+        reader = csv.reader(f)
+        next(reader)
+        
+        for row in reader:
+            L = []
+            label.append(1) if row[17] else label.append(0)
+            L.append([int(cell) for cell in row[:12]])
+            L.append(month_dict[row[12]])
+            L.append(int(cell) for cell in row[13:])
+            evidence.append(L)
+    
+    return (evidence, label)
 
 
 def train_model(evidence, labels):
