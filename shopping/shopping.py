@@ -76,25 +76,24 @@ def load_data(filename):
     """
     evidence = []
     label = []
-    with open('shopping.csv') as f:
+    with open(filename) as f:
         reader = csv.reader(f)
         next(reader)
         
         for row in reader:
             L = []
-            label.append(1) if row[17] == "TRUE" else label.append(0)
+            label.append(1) if row[17] == 'TRUE' else label.append(0)
             L.append(int(row[0]))
             L.append(float(row[1]))
             L.append(int(row[2]))
             L.append(float(row[3]))
             L.append(int(row[4]))
-            L.append(float(cell) for cell in row[5:10])
+            L += [float(cell) for cell in row[5:10]]
             L.append(month_dict[row[10]])
-            L.append(int(cell) for cell in row[11:15])
+            L += [int(cell) for cell in row[11:15]]
             L.append(int(row[15] == 'Returning_Visitor')) 
-            L.append(int(row[16]))  
+            L.append(int(row[16] == 'FALSE'))  
             evidence.append(L)
-    
     return (evidence, label)
 
 
@@ -123,7 +122,26 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
+    positive_identified = 0
+    negative_identified = 0
+    total_positive = 0
+    total_negative = 0
+    
+    for label, prediction in zip(labels, predictions):
+        if label:
+            total_positive += 1 
+            if prediction:
+                positive_identified += 1
+        else:
+            total_negative += 1 
+            if not(prediction):
+                negative_identified += 1
+    
+    sensitivity = positive_identified / total_positive
+    
+    specificity = negative_identified / total_negative
+    
+    return sensitivity, specificity
 
 
 if __name__ == "__main__":
