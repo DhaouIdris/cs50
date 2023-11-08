@@ -134,10 +134,14 @@ class NimAI():
         Q-value in `self.q`. If there are no available actions in
         `state`, return 0.
         """
-
-
-        if self.q[state, action] = None:
+        reward = -100
+        actions = self.available_actions(state)
+        if actions == set():
             return 0
+        for action in actions:
+            if self.q[state, action] > reward:
+                reward = self.q[state, action]
+        return reward
 
 
     def choose_action(self, state, epsilon=True):
