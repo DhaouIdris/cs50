@@ -68,6 +68,7 @@ def load_data(data_dir):
         for file in files:
             image_path = os.path.join(path, file)
             image = cv2.imread(image_path)
+            image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
             image = np.array(image)
             images.append(image)
             labels.append(i)
