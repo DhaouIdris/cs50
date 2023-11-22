@@ -63,7 +63,7 @@ def load_data(data_dir):
     labels = []
 
     for i in range(NUM_CATEGORIES):
-        path = f"{data_dir}/{i}"
+        path = os.path.join(data_dir, i)
         files = os.listdir(path)
         for file in files:
             image_path = os.path.join(path, file)
