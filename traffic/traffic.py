@@ -89,7 +89,11 @@ def get_model():
     
     
     model.add(tf.keras.layers.Dense(NUM_CATEGORIES, activation="sigmoid"))
-
+    model.compile(
+    optimizer="adam",
+    loss="categorical_crossentropy",
+    metrics=["accuracy"]
+)
     
     return model
 
