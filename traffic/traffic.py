@@ -63,7 +63,7 @@ def load_data(data_dir):
     labels = []
 
     for i in range(NUM_CATEGORIES):
-        path = os.path.join(data_dir, i)
+        path = os.path.join(data_dir, str(i))
         files = os.listdir(path)
         for file in files:
             image_path = os.path.join(path, file)
@@ -85,16 +85,19 @@ def get_model():
     model = tf.keras.models.Sequential()
     
     
+    model.add(tf.keras.layers.Conv2D(32, (3, 3), activation="relu", input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)))
     
+    model.add(tf.keras.layers.MaxPooling2D(pool_size = (2, 2)))
     
+    model.add(tf.keras.layers.Flatten())
     
     model.add(tf.keras.layers.Dense(NUM_CATEGORIES, activation="sigmoid"))
+
     model.compile(
-    optimizer="adam",
-    loss="categorical_crossentropy",
-    metrics=["accuracy"]
-)
-    
+        optimizer = 'adam',
+        loss = 'categorical_crossentropy',
+        metrics = ['accuracy']
+    )
     return model
 
 
